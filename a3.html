@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Assignment 3</title>
+    <script src="d3.min.js"></script>
+    <script>
+
+
+        function drawit(jsonString) {
+
+            // parse a text string into a javascript array of values
+            let dataValues = JSON.parse(jsonString);
+
+            let maxValue = d3.max(dataValues) //maximum value in the data set dataValues
+            let canvas = {height: 300, width: 600} //size of the svg area we will draw in
+            let margin = 25 //margin around the bar chart
+            let maxBarHeight = canvas.height - 2*margin //bar can only be as high as the canvas minus the top and bottom margin
+            let barWidth = (canvas.width - 2*margin)/dataValues.length //bars width scales with the size of the data set (more values = thinner bars!)
+
+            console.log(dataValues)
+
+            // d3 drawing code should go here!
+
+            //Update section (enter section's merge call sets attributes of bars here and in
+            // the enter section)
+            let selection1 = d3.select("#drawingplace")
+                .selectAll("rect")
+                .data(dataValues)
+                
+
+            //Enter section
+            //merge makes all the changes made in the enter section to also apply to bars 
+            //in the Update section. Keeps bar appearances consistant
+            selection1.enter()
+                .append("rect")
+                .merge(selection1)
+                .attr("height", d => maxBarHeight * d/maxValue) 
+                .attr("width", barWidth - 5) 
+                .attr("x", (d, i) => margin + i * barWidth) 
+                .attr("y", d => margin + maxBarHeight - maxBarHeight * d/maxValue) 
+            
+            //Make a selection for the exit selection to operate on    
+            let exitSelection = d3.select("#drawingplace")
+                .selectAll("rect")
+                .data(dataValues) 
+                .attr("height", d => maxBarHeight * d/maxValue)
+                .attr("y", d => margin + maxBarHeight - maxBarHeight * d/maxValue)
+
+            //Exit section
+            exitSelection.exit()
+                .remove()
+        }
+
+    </script>
+</head>
+
+<body onload="drawit('[100,300,200]')">
+    <h1>Assignment 3 COMP4304</h1>
+    <p>
+        <b>Submitted by:</b> Conrad Reid (ccharlesr) Student #: 201622065
+    </p>
+    <h2>Attribution</h2>
+    <p>
+        <!--Attribution goes here-->
+        <a href ="http://www.cs.mun.ca/~brown/dvisnotes/8_d3selections/D3selectons.html">http://www.cs.mun.ca/~brown/dvisnotes/8_d3selections/D3selectons.html</a>
+        Dr. Brown's "D3 Selections" notes and video walkthrough referenced for how the update, enter and, exit sections work.  
+    </p>
+    <h2>Solution</h2>
+    <p>Enter the values here:</p>
+    <textarea onchange=drawit(this.value)>[100,300,200]</textarea>
+    <h3>As bars:</h3>
+
+    <svg id="drawingplace" height="300" width="600">
+
+    </svg>
+
+</body>
+
+</html>
